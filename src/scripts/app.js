@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Dropdown from './components/dropdown';
 import Search from './components/search';
 import httpService from './services/httpService';
+import StepTwoContainer from './containers/step-two-container';
+
 
  class Main extends Component {
    constructor(props) {
@@ -11,9 +13,11 @@ import httpService from './services/httpService';
        years: ['1 year','2 years', '3 years'],
        months: ['1 month', '2 months', '3 months','4 months','5 months','6 months', '7 months', '8 months', '9 months', '10 months','11 months', ' 12 months' ],
        address: null,
-       errorStatus: false
+       errorStatus: false,
+       stage: 0
      }
      this.handleSubmit = this.handleSubmit.bind(this);
+     this.populateAddressInputElements = this.populateAddressInputElements.bind(this);
    }
 
    handleSubmit(event) {
@@ -33,23 +37,29 @@ import httpService from './services/httpService';
       })
     } else {
       this.setState({
-        errorStatus: true
+        errorStatus: true,
+        stage: +1
       })
     }
   }
 
+  populateAddressInputElements(e) {
+    // console.log(e.target)
+  }
+
    render() {
      const addressData = this.state.address  && this.state.address.length && !this.state.errorStatus ? this.state.address : []
-     console.log(addressData)
+     console.log(this.state)
      return (
        <div>
         <form onSubmit={this.handleSubmit}>
           <Dropdown option={this.state.years} />
           <Dropdown option={this.state.months} />
           <Search />
-          <button>Send</button>
+          <button onClick={this.goToNextStep}>Send</button>
          </form>
-         <Dropdown option={addressData} />
+         <Dropdown onChange={(e) => this.populateAddressInputElements(e)} option={addressData}  />
+         <StepTwoContainer data={addressData}/>
        </div>
 
      )
